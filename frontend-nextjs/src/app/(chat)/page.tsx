@@ -29,7 +29,7 @@ import { useAuthStore, useChatStore } from "@/stores";
 import { useSocket } from "@/hooks/useSocket";
 import { conversationsApi, messagesApi } from "@/lib/api-client";
 import { formatDate, cn } from "@/lib/utils";
-import type { Conversation, Message } from "@/types";
+import type { Conversation, Message, ModelType } from "@/types";
 import "highlight.js/styles/github-dark.css";
 import "katex/dist/katex.min.css";
 
@@ -468,8 +468,8 @@ function WelcomeScreen({
 }: {
   onQuickAction: (msg: string) => void;
   onSend: (content: string) => void;
-  selectedModel: string;
-  onModelChange: (model: string) => void;
+  selectedModel: ModelType;
+  onModelChange: (model: ModelType) => void;
   isLoading: boolean;
   inputMessage: string;
 }) {

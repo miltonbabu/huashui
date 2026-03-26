@@ -526,7 +526,7 @@ export default function AdminDashboard() {
           <AlertCircle className="w-12 h-12" />
           <p>{error}</p>
           <button
-            onClick={fetchDashboardData}
+            onClick={() => fetchDashboardData()}
             className="px-4 py-2 bg-primary text-primary-foreground rounded-lg"
           >
             Retry

@@ -9,6 +9,7 @@ const { Server } = require("socket.io");
 const jwt = require("jsonwebtoken");
 const sequelize = require("./config/database");
 const { dbType } = require("./config/database");
+const seedAdmin = require("./seeders/admin");
 const User = require("./models/User");
 const Conversation = require("./models/Conversation");
 const Message = require("./models/Message");
@@ -35,7 +36,10 @@ const io = new Server(httpServer, {
 
 sequelize
   .sync()
-  .then(() => console.log("✓ SQLite database connected"))
+  .then(() => {
+    console.log(`✓ ${dbType} database connected`);
+    return seedAdmin();
+  })
   .catch((err) => {
     console.error("✗ Database connection error:", err);
     process.exit(1);

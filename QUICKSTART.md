@@ -1,10 +1,9 @@
 # Quick Start Guide
 
 ## Prerequisites
-- Node.js v16+ installed
-- MongoDB running locally or connection string
+- Node.js v18+ installed
 - DeepSeek API key
-- Anthropic (Claude) API key
+- Anthropic (Claude) API key (optional)
 
 ## Installation Steps
 
@@ -20,10 +19,9 @@ npm install
 cp .env.example .env
 
 # Edit .env with your actual values:
-# - MongoDB connection string
 # - JWT secret (any random string)
 # - DeepSeek API key
-# - Anthropic API key
+# - Anthropic API key (optional)
 
 # Start backend
 npm run dev
@@ -31,42 +29,38 @@ npm run dev
 
 Backend will run on http://localhost:5000
 
+Note: SQLite database is automatically created on first run - no additional database setup needed!
+
 ### 2. Frontend Setup
 
 ```bash
-cd frontend
+cd frontend-nextjs
 
 # Install dependencies
 npm install
 
-# Create .env file
-cp .env.example .env
-
-# Edit .env if needed (default is fine for local development)
+# Create .env.local file (optional for local development)
+# NEXT_PUBLIC_API_URL=http://localhost:5000/api
 
 # Start frontend
-npm start
+npm run dev
 ```
 
 Frontend will run on http://localhost:3000
 
 ### 3. Create Admin User
 
-After registering your first user, you can make them an admin:
+After registering your first user, you can make them an admin by directly editing the SQLite database:
 
 ```bash
-# Connect to MongoDB
-mongosh
-
-# Use the database
-use ai-chatbot
+# Using SQLite CLI
+sqlite3 backend/database.sqlite
 
 # Update user to admin
-db.users.updateOne(
-  { email: "your-email@example.com" },
-  { $set: { role: "admin" } }
-)
+UPDATE Users SET role = 'admin' WHERE email = 'your-email@example.com';
 ```
+
+Or use a SQLite database browser like [DB Browser for SQLite](https://sqlitebrowser.org/).
 
 ## Testing the Application
 
@@ -77,21 +71,17 @@ db.users.updateOne(
 
 ## Common Issues
 
-### MongoDB Connection Error
-```
-Make sure MongoDB is running:
-- macOS: brew services start mongodb-community
-- Linux: sudo systemctl start mongod
-- Windows: net start MongoDB
-```
-
 ### Port Already in Use
-```bash
+```powershell
 # Backend (port 5000)
-lsof -ti:5000 | xargs kill -9
+# Windows
+netstat -ano | findstr :5000
+taskkill /PID <PID> /F
 
 # Frontend (port 3000)
-lsof -ti:3000 | xargs kill -9
+# Windows
+netstat -ano | findstr :3000
+taskkill /PID <PID> /F
 ```
 
 ### API Key Issues
@@ -99,12 +89,17 @@ lsof -ti:3000 | xargs kill -9
 - Check that .env file is in the correct directory
 - Restart the backend after updating .env
 
+### Database Issues
+- SQLite database file is auto-created in `backend/database.sqlite`
+- Delete the file to reset the database
+- Check file permissions if database errors occur
+
 ## Next Steps
 
-1. Customize the styling in frontend/src/App.css
-2. Add more AI models in backend/src/services/aiService.js
+1. Customize the styling in `frontend-nextjs/src/app/globals.css`
+2. Add more AI models in `backend/src/services/aiService.js`
 3. Implement additional features like file uploads
-4. Deploy to production (see DEPLOYMENT.md)
+4. Deploy to production (see below)
 
 ## Getting API Keys
 
@@ -119,6 +114,18 @@ lsof -ti:3000 | xargs kill -9
 2. Sign up for an account
 3. Navigate to API Keys section
 4. Generate a new key
+
+## Production Deployment
+
+### Backend
+1. Set `NODE_ENV=production`
+2. Set up PostgreSQL database
+3. Add `DATABASE_URL` to environment variables
+4. Run `npm start`
+
+### Frontend
+1. Run `npm run build`
+2. Run `npm run start` or deploy to Vercel
 
 ## Support
 

@@ -1,7 +1,7 @@
 # Project Structure
 
 ```
-chatbot-app/
+huashui-ai/
 │
 ├── README.md                    # Main documentation
 ├── QUICKSTART.md               # Quick installation guide
@@ -11,11 +11,15 @@ chatbot-app/
 ├── backend/                    # Node.js/Express Backend
 │   ├── package.json           # Backend dependencies
 │   ├── .env.example           # Environment variables template
+│   ├── database.sqlite        # SQLite database (auto-created)
 │   │
 │   └── src/
 │       ├── server.js          # Main server file
 │       │
-│       ├── models/            # MongoDB Models
+│       ├── config/
+│       │   └── database.js    # SQLite/PostgreSQL connection
+│       │
+│       ├── models/            # Sequelize Models
 │       │   ├── User.js        # User schema
 │       │   ├── Conversation.js # Conversation schema
 │       │   └── Message.js     # Message schema
@@ -33,33 +37,66 @@ chatbot-app/
 │       └── services/          # Business Logic
 │           └── aiService.js   # AI API integration (DeepSeek/Claude)
 │
-└── frontend/                  # React Frontend
+└── frontend-nextjs/           # Next.js Frontend
     ├── package.json          # Frontend dependencies
-    ├── .env.example          # Environment variables template
+    ├── next.config.ts        # Next.js configuration
+    ├── tailwind.config.ts    # Tailwind CSS configuration
     │
-    ├── public/
-    │   └── index.html        # HTML template
+    ├── public/               # Static assets
     │
     └── src/
-        ├── index.js          # Entry point
-        ├── index.css         # Base styles
-        ├── App.js            # Main App component
-        ├── App.css           # Global styles
+        ├── app/              # App Router pages
+        │   ├── layout.tsx    # Root layout
+        │   ├── globals.css   # Global styles
+        │   │
+        │   ├── (auth)/       # Auth route group
+        │   │   ├── layout.tsx
+        │   │   ├── login/
+        │   │   │   └── page.tsx
+        │   │   └── register/
+        │   │       └── page.tsx
+        │   │
+        │   ├── (chat)/       # Chat route group
+        │   │   ├── layout.tsx
+        │   │   ├── page.tsx  # Main chat page
+        │   │   └── settings/
+        │   │       └── page.tsx
+        │   │
+        │   └── admin/
+        │       └── page.tsx  # Admin panel
         │
-        ├── context/          # React Context
-        │   └── AuthContext.js # Authentication state
+        ├── components/       # React components
+        │   ├── chat/         # Chat-specific components
+        │   │   ├── ChatInput.tsx
+        │   │   ├── MessageBubble.tsx
+        │   │   ├── MermaidDiagram.tsx
+        │   │   ├── SharePopup.tsx
+        │   │   └── Sidebar.tsx
+        │   │
+        │   ├── ui/           # Reusable UI components (shadcn)
+        │   │   ├── button.tsx
+        │   │   ├── input.tsx
+        │   │   ├── card.tsx
+        │   │   └── ...
+        │   │
+        │   └── providers.tsx # React Query & Theme providers
         │
-        ├── services/         # API Services
-        │   └── api.js        # Axios API wrapper
+        ├── hooks/            # Custom React hooks
+        │   └── useSocket.ts  # Socket.io hook
         │
-        └── pages/            # Page Components
-            ├── Login.js      # Login page
-            ├── Register.js   # Registration page
-            ├── Chat.js       # Main chat interface
-            ├── AdminDashboard.js # Admin panel
-            ├── Auth.css      # Auth pages styling
-            ├── Chat.css      # Chat page styling
-            └── AdminDashboard.css # Admin styling
+        ├── lib/              # Utility functions
+        │   ├── api-client.ts # Axios API wrapper
+        │   └── utils.ts      # Helper functions
+        │
+        ├── stores/           # Zustand state stores
+        │   ├── authStore.ts  # Authentication state
+        │   ├── chatStore.ts  # Chat state
+        │   └── themeStore.ts # Theme state
+        │
+        └── types/            # TypeScript types
+            ├── api.ts
+            ├── chat.ts
+            └── user.ts
 ```
 
 ## Key Files Explained
@@ -68,10 +105,16 @@ chatbot-app/
 
 **server.js**
 - Express server setup
-- MongoDB connection
+- SQLite/PostgreSQL connection
 - Middleware configuration
 - Route registration
+- Socket.io setup
 - Error handling
+
+**config/database.js**
+- SQLite for development (auto-created)
+- PostgreSQL for production
+- Sequelize ORM configuration
 
 **models/**
 - `User.js`: User accounts with authentication
@@ -96,42 +139,43 @@ chatbot-app/
 
 ### Frontend
 
-**App.js**
-- React Router setup
-- Protected routes
-- Public routes
-- Authentication flow
+**app/layout.tsx**
+- Root layout with providers
+- Theme configuration
+- Font loading
 
-**AuthContext.js**
-- Global authentication state
-- Login/logout functions
-- User data management
+**stores/**
+- `authStore.ts`: Authentication state (Zustand)
+- `chatStore.ts`: Chat state and conversation management
+- `themeStore.ts`: Dark/light mode state
 
-**api.js**
+**lib/api-client.ts**
 - Axios configuration
 - API endpoints
 - Request/response interceptors
 - Token management
 
 **Pages:**
-- `Login.js` & `Register.js`: Authentication UI
-- `Chat.js`: Main chat interface with sidebar
-- `AdminDashboard.js`: Admin panel with stats and user management
+- `login/page.tsx` & `register/page.tsx`: Authentication UI
+- `(chat)/page.tsx`: Main chat interface with sidebar
+- `admin/page.tsx`: Admin panel with stats and user management
 
 ## Features by File
 
 ### User Features
-- **Login.js / Register.js**: Account creation and authentication
-- **Chat.js**: 
+- **Login / Register**: Account creation and authentication
+- **Chat**: 
   - Conversation management
   - Model selection (DeepSeek/Claude)
-  - Real-time messaging
+  - Real-time messaging with Socket.io
   - Message history
   - Markdown rendering
   - Code syntax highlighting
+  - Mermaid diagrams
+  - Math equations (KaTeX)
 
 ### Admin Features
-- **AdminDashboard.js**:
+- **Admin Panel**:
   - System statistics
   - User management (view, edit, delete, activate/deactivate)
   - Conversation monitoring
@@ -154,14 +198,14 @@ chatbot-app/
 
 ## Database Schema
 
-### Users Collection
+### Users Table
 - Authentication info (email, password hash)
 - Profile (name, avatar)
 - Preferences (default model, theme)
 - Usage statistics (messages, tokens)
 - Role (user/admin)
 
-### Conversations Collection
+### Conversations Table
 - User reference
 - Title
 - Selected model
@@ -169,7 +213,7 @@ chatbot-app/
 - Metadata (tokens, cost)
 - Timestamps
 
-### Messages Collection
+### Messages Table
 - Conversation reference
 - User reference
 - Role (user/assistant/system)
@@ -181,7 +225,7 @@ chatbot-app/
 ## API Flow
 
 1. User logs in → JWT token generated
-2. Token stored in localStorage
+2. Token stored in localStorage/Zustand
 3. Token sent with all API requests
 4. Backend verifies token
 5. Request processed based on user role
@@ -207,5 +251,5 @@ chatbot-app/
 3. **CORS**: Configured for frontend origin
 4. **Helmet**: Security headers
 5. **Rate Limiting**: IP-based throttling
-6. **Input Validation**: Mongoose schemas
+6. **Input Validation**: Sequelize validation
 7. **Role-Based Access**: Admin vs User permissions

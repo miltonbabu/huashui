@@ -5,8 +5,11 @@ import { io, Socket } from "socket.io-client";
 import { useAuthStore, useChatStore } from "@/stores";
 
 const SOCKET_URL =
+  (typeof window !== "undefined" &&
+    (window as any).__ENV__?.NEXT_PUBLIC_API_URL?.replace("/api", "")) ||
   process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
-  "http://localhost:5000";
+  "https://api.ncwu.site" ||
+  "wss://api.ncwu.site";
 
 export function useSocket() {
   const socketRef = useRef<Socket | null>(null);
@@ -38,16 +41,14 @@ export function useSocket() {
     socketRef.current.on(
       "new-message",
       (data: { type: string; message: any }) => {
-        // For reasoning model, the assistant message is added via HTTP response
-        // after streaming completes, so don't add it again via WebSocket
+        // Only add message via WebSocket for streaming (reasoning model)
+        // Standard model messages are already added from API response
         if (
           data.type === "assistant" &&
           data.message?.model === "huashui-reasoning"
         ) {
-          // Just stop streaming state, message is already added
+          addMessage(data.message);
           setStreaming(false);
-          setStreamingContent("");
-          setStreamingReasoning("");
         }
       },
     );

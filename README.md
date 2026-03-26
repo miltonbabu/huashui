@@ -1,69 +1,85 @@
-# AI Chat Platform - DeepSeek & Claude
+# Huashui AI - AI Chat Platform
 
-A full-stack ChatGPT-like application with support for DeepSeek and Claude AI models, featuring an admin panel, user authentication, and conversation management.
+A modern full-stack AI chat application with support for DeepSeek and Claude AI models, featuring real-time streaming, user authentication, and conversation management.
 
-## 🚀 Features
+## Features
 
 - **Multi-Model Support**: Switch between DeepSeek and Claude AI models
+- **Real-time Streaming**: Stream AI responses with Socket.io
 - **User Authentication**: JWT-based secure authentication
 - **Conversation Management**: Save, organize, and search chat history
 - **Admin Panel**: Manage users, view analytics, control system settings
-- **Real-time Streaming**: Stream AI responses in real-time
-- **Responsive Design**: Beautiful, modern UI that works on all devices
+- **Responsive Design**: Modern UI built with Next.js and Tailwind CSS
+- **Markdown Support**: Rich text rendering with code highlighting, math equations (KaTeX), and diagrams (Mermaid)
 - **Rate Limiting**: Protect your API from abuse
 - **User Roles**: Admin and regular user permissions
 
-## 📁 Project Structure
+## Tech Stack
+
+### Frontend
+- **Next.js 16** - React framework with App Router
+- **React 19** - UI library
+- **TypeScript** - Type safety
+- **Tailwind CSS 4** - Styling
+- **Zustand** - State management
+- **React Query** - Data fetching
+- **shadcn/ui** - UI components
+- **Socket.io Client** - Real-time communication
+
+### Backend
+- **Node.js** - Runtime environment
+- **Express.js** - Web framework
+- **SQLite** - Database (with Sequelize ORM)
+- **Socket.io** - Real-time bidirectional communication
+- **JWT** - Authentication
+- **bcryptjs** - Password hashing
+
+## Project Structure
 
 ```
-chatbot-app/
-├── frontend/           # React frontend application
-│   ├── public/
+huashui-ai/
+├── frontend-nextjs/          # Next.js frontend application
 │   ├── src/
-│   │   ├── components/ # React components
-│   │   ├── pages/      # Page components
-│   │   ├── services/   # API services
-│   │   ├── context/    # React context
-│   │   └── utils/      # Utility functions
+│   │   ├── app/              # App Router pages
+│   │   │   ├── (auth)/       # Auth pages (login, register)
+│   │   │   ├── (chat)/       # Chat pages
+│   │   │   └── admin/        # Admin panel
+│   │   ├── components/       # React components
+│   │   │   ├── chat/         # Chat-specific components
+│   │   │   └── ui/           # Reusable UI components
+│   │   ├── hooks/            # Custom React hooks
+│   │   ├── lib/              # Utility functions
+│   │   ├── stores/           # Zustand stores
+│   │   └── types/            # TypeScript types
 │   └── package.json
-├── backend/            # Node.js/Express backend
+├── backend/                  # Node.js/Express backend
 │   ├── src/
-│   │   ├── models/     # MongoDB models
-│   │   ├── routes/     # API routes
-│   │   ├── middleware/ # Custom middleware
-│   │   ├── controllers/# Route controllers
-│   │   └── services/   # Business logic
+│   │   ├── config/           # Database configuration
+│   │   ├── middleware/       # Custom middleware
+│   │   ├── models/           # Sequelize models
+│   │   ├── routes/           # API routes
+│   │   └── services/         # Business logic
 │   └── package.json
 └── README.md
 ```
 
-## 🛠️ Technology Stack
+## Prerequisites
 
-### Frontend
-- React 18
-- React Router DOM
-- Axios
-- Context API for state management
-- CSS3 with custom animations
-
-### Backend
-- Node.js
-- Express.js
-- MongoDB with Mongoose
-- JWT for authentication
-- bcrypt for password hashing
-- axios for API calls
-
-## 📋 Prerequisites
-
-- Node.js (v16 or higher)
-- MongoDB (v4.4 or higher)
+- Node.js (v18 or higher)
+- npm or yarn
 - DeepSeek API Key
 - Anthropic (Claude) API Key
 
-## 🔧 Installation
+## Installation
 
-### 1. Clone and Install Dependencies
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/miltonbabu/huashui-ai.git
+cd huashui-ai
+```
+
+### 2. Install Dependencies
 
 ```bash
 # Install backend dependencies
@@ -71,71 +87,47 @@ cd backend
 npm install
 
 # Install frontend dependencies
-cd ../frontend
+cd ../frontend-nextjs
 npm install
 ```
 
-### 2. Environment Configuration
+### 3. Environment Configuration
 
 #### Backend (.env file in /backend directory)
+
 ```env
 PORT=5000
-MONGODB_URI=mongodb://localhost:27017/ai-chatbot
 JWT_SECRET=your-super-secret-jwt-key-change-this
 DEEPSEEK_API_KEY=your-deepseek-api-key
 ANTHROPIC_API_KEY=your-claude-api-key
 NODE_ENV=development
 ```
 
-#### Frontend (.env file in /frontend directory)
+#### Frontend (.env.local file in /frontend-nextjs directory)
+
 ```env
-REACT_APP_API_URL=http://localhost:5000/api
-```
-
-### 3. Setup MongoDB
-
-Make sure MongoDB is running on your system:
-
-```bash
-# Start MongoDB (macOS with Homebrew)
-brew services start mongodb-community
-
-# Start MongoDB (Linux with systemd)
-sudo systemctl start mongod
-
-# Start MongoDB (Windows)
-net start MongoDB
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
 ```
 
 ### 4. Start the Application
 
 #### Start Backend (from /backend directory)
+
 ```bash
 npm run dev
 ```
 
-#### Start Frontend (from /frontend directory)
+#### Start Frontend (from /frontend-nextjs directory)
+
 ```bash
-npm start
+npm run dev
 ```
 
 The application will be available at:
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:5000
 
-## 👤 Default Admin Account
-
-After first run, you can create an admin account by registering and then updating the user role in MongoDB:
-
-```javascript
-// In MongoDB shell or Compass
-db.users.updateOne(
-  { email: "your-email@example.com" },
-  { $set: { role: "admin" } }
-)
-```
-
-## 🔑 API Endpoints
+## API Endpoints
 
 ### Authentication
 - `POST /api/auth/register` - Register new user
@@ -158,131 +150,69 @@ db.users.updateOne(
 - `PUT /api/admin/users/:id` - Update user (admin only)
 - `DELETE /api/admin/users/:id` - Delete user (admin only)
 
-## 🎨 Features Detail
+## Default Admin Account
 
-### Chat Interface
-- Real-time streaming responses
-- Markdown support in messages
-- Code syntax highlighting
-- Model selection (DeepSeek/Claude)
-- Conversation sidebar with search
-- Message regeneration
+After first run, you can create an admin account by registering and then updating the user role in the database:
 
-### Admin Panel
-- User management (view, edit, delete)
-- System statistics dashboard
-- API usage analytics
-- Conversation monitoring
-- System settings control
-
-### Security
-- JWT token authentication
-- Password hashing with bcrypt
-- Rate limiting on API endpoints
-- Input validation and sanitization
-- CORS configuration
-
-## 🚀 Deployment
-
-### Backend Deployment (Example: Heroku/Railway)
-
-```bash
-# Make sure to set environment variables
-# Deploy backend with your preferred platform
+```javascript
+// Using SQLite CLI or a database browser
+// Update the user's role to 'admin' in the Users table
 ```
 
-### Frontend Deployment (Example: Vercel/Netlify)
-
-```bash
-# Build frontend
-npm run build
-
-# Deploy the /build folder
-```
-
-### MongoDB Atlas (Cloud Database)
-
-1. Create account at https://www.mongodb.com/cloud/atlas
-2. Create a cluster
-3. Get connection string
-4. Update MONGODB_URI in backend .env
-
-## 📝 API Keys Setup
+## API Keys Setup
 
 ### DeepSeek API
 1. Visit https://platform.deepseek.com/
 2. Sign up/Login
 3. Generate API key
-4. Add to backend .env as DEEPSEEK_API_KEY
+4. Add to backend .env as `DEEPSEEK_API_KEY`
 
 ### Claude API (Anthropic)
 1. Visit https://console.anthropic.com/
 2. Sign up/Login
 3. Generate API key
-4. Add to backend .env as ANTHROPIC_API_KEY
+4. Add to backend .env as `ANTHROPIC_API_KEY`
 
-## 🐛 Troubleshooting
+## Deployment
 
-### MongoDB Connection Issues
+### Backend Deployment
+
 ```bash
-# Check if MongoDB is running
-mongosh
-
-# If not, start it with:
-brew services start mongodb-community  # macOS
-sudo systemctl start mongod            # Linux
+# Build and start in production mode
+cd backend
+npm start
 ```
 
-### Port Already in Use
-```bash
-# Kill process on port 5000
-lsof -ti:5000 | xargs kill -9
+### Frontend Deployment
 
-# Kill process on port 3000
-lsof -ti:3000 | xargs kill -9
+```bash
+# Build for production
+cd frontend-nextjs
+npm run build
+
+# Start production server
+npm run start
 ```
 
-### CORS Issues
-- Make sure backend CORS is configured to allow your frontend URL
-- Check if API_URL in frontend .env matches backend URL
+### Environment Variables for Production
 
-## 📚 Learn More
+Make sure to set all environment variables in your production environment:
+- `JWT_SECRET` - Use a strong, unique secret
+- `DEEPSEEK_API_KEY` - Your DeepSeek API key
+- `ANTHROPIC_API_KEY` - Your Claude API key
+- `NEXT_PUBLIC_API_URL` - Your backend API URL
 
-- [DeepSeek API Documentation](https://platform.deepseek.com/docs)
-- [Anthropic Claude API Documentation](https://docs.anthropic.com/)
-- [React Documentation](https://react.dev/)
-- [Express.js Guide](https://expressjs.com/)
-- [MongoDB Manual](https://docs.mongodb.com/)
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
-## ⚠️ Important Notes
+## Security Notes
 
 1. **API Costs**: Both DeepSeek and Claude APIs may incur costs. Monitor your usage!
 2. **Security**: Change all default secrets and passwords in production
 3. **Rate Limiting**: Implement appropriate rate limits for your use case
-4. **Backups**: Regularly backup your MongoDB database
-5. **Environment Variables**: Never commit .env files to version control
+4. **Environment Variables**: Never commit .env files to version control
 
-## 🎯 Future Enhancements
+## License
 
-- [ ] Add more AI models (GPT-4, Gemini, etc.)
-- [ ] Image generation support
-- [ ] File upload and analysis
-- [ ] Multi-language support
-- [ ] Voice input/output
-- [ ] Conversation sharing
-- [ ] Export conversations
-- [ ] Custom model parameters
-- [ ] Usage billing/tracking
-- [ ] Team/Organization support
+This project is licensed under the MIT License.
 
 ---
 
-Built with ❤️ using DeepSeek and Claude AI
+Built with Next.js, Express, and AI power from DeepSeek & Claude

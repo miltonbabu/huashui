@@ -219,20 +219,13 @@ export default function ChatPage() {
       const data = await response.json();
 
       if (data.success) {
-        // For reasoning model, don't add assistant message from HTTP response
-        // It will be added via WebSocket to avoid duplicates
-        if (selectedModel === "huashui-reasoning") {
-          setMessages((prev) => [
-            ...prev.filter((m) => m.id !== tempUserMessage.id),
-            data.userMessage as Message,
-          ]);
-        } else {
-          setMessages((prev) => [
-            ...prev.filter((m) => m.id !== tempUserMessage.id),
-            data.userMessage as Message,
-            data.assistantMessage as Message,
-          ]);
-        }
+        // Add both user and assistant messages from HTTP response
+        // For reasoning model, WebSocket only handles streaming display, not message storage
+        setMessages((prev) => [
+          ...prev.filter((m) => m.id !== tempUserMessage.id),
+          data.userMessage as Message,
+          data.assistantMessage as Message,
+        ]);
         loadConversations();
       }
     } catch (error) {

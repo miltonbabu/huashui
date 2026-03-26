@@ -38,11 +38,16 @@ export function useSocket() {
     socketRef.current.on(
       "new-message",
       (data: { type: string; message: any }) => {
-        // Only add message via WebSocket for streaming (reasoning model)
-        // Standard model messages are already added from API response
-        if (data.type === "assistant" && data.message?.model === "huashui-reasoning") {
-          addMessage(data.message);
+        // For reasoning model, the assistant message is added via HTTP response
+        // after streaming completes, so don't add it again via WebSocket
+        if (
+          data.type === "assistant" &&
+          data.message?.model === "huashui-reasoning"
+        ) {
+          // Just stop streaming state, message is already added
           setStreaming(false);
+          setStreamingContent("");
+          setStreamingReasoning("");
         }
       },
     );

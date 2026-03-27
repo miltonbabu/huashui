@@ -10,6 +10,7 @@ interface AuthStore extends AuthState {
   setUser: (user: User | null) => void;
   setToken: (token: string | null) => void;
   checkAuth: () => Promise<void>;
+  refreshToken: () => Promise<boolean>;
 }
 
 export const useAuthStore = create<AuthStore>()(
@@ -100,8 +101,39 @@ export const useAuthStore = create<AuthStore>()(
           } else {
             set({ isAuthenticated: false, user: null, token: null, isLoading: false });
           }
-        } catch {
-          set({ isAuthenticated: false, user: null, token: null, isLoading: false });
+        } catch (error: any) {
+          // Check if it's a network error (server might be waking up)
+          if (error.message?.includes('fetch') || error.message?.includes('network') || !navigator.onLine) {
+            // Keep the user logged in, but mark as loading
+            // The app will retry on next request
+            console.log('Network error during auth check, keeping session');
+            set({
+              isAuthenticated: true,
+              token,
+              isLoading: false,
+            });
+          } else {
+            set({ isAuthenticated: false, user: null, token: null, isLoading: false });
+          }
+        }
+      },
+
+      refreshToken: async () => {
+        try {
+          const response = await authApi.refreshToken();
+          if (response.success && response.token) {
+            localStorage.setItem('token', response.token);
+            set({
+              token: response.token,
+              user: response.user as User,
+              isAuthenticated: true,
+            });
+            return true;
+          }
+          return false;
+        } catch (error) {
+          console.error('Token refresh failed:', error);
+          return false;
         }
       },
     }),

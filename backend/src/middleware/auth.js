@@ -77,6 +77,6 @@ exports.authorize = (...roles) => {
  */
 exports.generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: '7d'
+    expiresIn: process.env.JWT_EXPIRE || '30d'
   });
 };

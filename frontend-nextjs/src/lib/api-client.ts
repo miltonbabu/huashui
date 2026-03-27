@@ -109,6 +109,9 @@ export const authApi = {
   getCurrentUser: () =>
     apiClient.get<{ success: boolean; user: unknown }>('/auth/me'),
   
+  refreshToken: () =>
+    apiClient.post<{ success: boolean; token: string; user: unknown }>('/auth/refresh'),
+  
   updatePreferences: (data: { defaultModel?: string; theme?: string }) =>
     apiClient.put<{ success: boolean; preferences: unknown }>('/auth/update-preferences', data),
 };

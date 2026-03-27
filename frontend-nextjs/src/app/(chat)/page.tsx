@@ -27,6 +27,7 @@ import { MessageBubble } from "@/components/chat/MessageBubble";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { useAuthStore, useChatStore } from "@/stores";
 import { useSocket } from "@/hooks/useSocket";
+import { useKeepAlive } from "@/hooks/useKeepAlive";
 import { conversationsApi, messagesApi } from "@/lib/api-client";
 import { formatDate, cn } from "@/lib/utils";
 import type { Conversation, Message, ModelType } from "@/types";
@@ -58,6 +59,9 @@ export default function ChatPage() {
 
   // Initialize WebSocket connection for real-time updates
   useSocket();
+
+  // Keep server awake (prevents Render free tier from sleeping)
+  useKeepAlive();
 
   // Debug: Log streaming state changes
   useEffect(() => {

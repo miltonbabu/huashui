@@ -135,6 +135,47 @@ router.get("/me", protect, async (req, res) => {
   }
 });
 
+// Refresh token endpoint
+router.post("/refresh", protect, async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id);
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (!user.isActive) {
+      return res.status(401).json({
+        success: false,
+        message: "Account has been deactivated",
+      });
+    }
+
+    // Generate new token
+    const token = generateToken(user.id);
+
+    res.json({
+      success: true,
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error("Token refresh error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error refreshing token",
+    });
+  }
+});
+
 router.put("/update-preferences", protect, async (req, res) => {
   try {
     const { defaultModel, theme } = req.body;

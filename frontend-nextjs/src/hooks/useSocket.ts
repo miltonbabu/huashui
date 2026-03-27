@@ -4,9 +4,19 @@ import { useEffect, useRef, useCallback } from "react";
 import { io, Socket } from "socket.io-client";
 import { useAuthStore, useChatStore } from "@/stores";
 
-const SOCKET_URL =
-  process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
-  "http://localhost:5000";
+const getSocketUrl = () => {
+  if (typeof window !== 'undefined' && (window as any).__ENV__?.NEXT_PUBLIC_SOCKET_URL) {
+    return (window as any).__ENV__.NEXT_PUBLIC_SOCKET_URL;
+  }
+  if (typeof window !== 'undefined' && (window as any).__ENV__?.NEXT_PUBLIC_API_URL) {
+    return (window as any).__ENV__.NEXT_PUBLIC_API_URL.replace("/api", "");
+  }
+  return process.env.NEXT_PUBLIC_SOCKET_URL ||
+    process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
+    "http://localhost:5000";
+};
+
+const SOCKET_URL = getSocketUrl();
 
 export function useSocket() {
   const socketRef = useRef<Socket | null>(null);

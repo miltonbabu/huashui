@@ -29,6 +29,7 @@ const httpServer = createServer(app);
 const allowedOrigins = [
   "http://localhost:3000",
   "https://chat.ncwu.site",
+  "https://ai.ncwu.site",
   "https://huashui-ai-frontend.onrender.com",
   process.env.FRONTEND_URL,
 ].filter(Boolean);

@@ -26,9 +26,16 @@ Message.belongsTo(Conversation, {
 
 const app = express();
 const httpServer = createServer(app);
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://chat.ncwu.site",
+  "https://huashui-ai-frontend.onrender.com",
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin: allowedOrigins,
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -46,9 +53,16 @@ sequelize
   });
 
 app.use(helmet());
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   }),
 );

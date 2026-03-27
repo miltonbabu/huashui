@@ -5,11 +5,8 @@ import { io, Socket } from "socket.io-client";
 import { useAuthStore, useChatStore } from "@/stores";
 
 const SOCKET_URL =
-  (typeof window !== "undefined" &&
-    (window as any).__ENV__?.NEXT_PUBLIC_API_URL?.replace("/api", "")) ||
   process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
-  "https://api.ncwu.site" ||
-  "wss://api.ncwu.site";
+  "http://localhost:5000";
 
 export function useSocket() {
   const socketRef = useRef<Socket | null>(null);

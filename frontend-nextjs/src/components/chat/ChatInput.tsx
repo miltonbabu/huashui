@@ -148,9 +148,9 @@ export function ChatInput({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4">
+    <form onSubmit={handleSubmit} className="p-2 sm:p-4">
       <div className="max-w-4xl mx-auto">
-        <div className="relative bg-card border border-border rounded-2xl shadow-lg overflow-hidden">
+        <div className="relative bg-card border border-border rounded-xl sm:rounded-2xl shadow-lg overflow-hidden">
           <textarea
             ref={textareaRef}
             value={message}
@@ -161,13 +161,13 @@ export function ChatInput({
                 ? "Message HuaShui (Reasoning mode)"
                 : "Message HuaShui"
             }
-            className="w-full px-4 py-3 bg-transparent resize-none focus:outline-none text-sm min-h-[48px] max-h-[200px]"
+            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-transparent resize-none focus:outline-none text-sm min-h-[44px] sm:min-h-[48px] max-h-[120px] sm:max-h-[200px]"
             rows={1}
             disabled={isLoading}
           />
 
-          <div className="flex items-center justify-between px-4 py-2 border-t border-border bg-muted/30">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between px-2 sm:px-4 py-1.5 sm:py-2 border-t border-border bg-muted/30">
+            <div className="flex items-center gap-1 sm:gap-2">
               <button
                 type="button"
                 onClick={() =>
@@ -178,33 +178,34 @@ export function ChatInput({
                   )
                 }
                 className={cn(
-                  "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all",
+                  "flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[10px] sm:text-xs font-medium transition-all",
                   selectedModel === "huashui-reasoning"
-                    ? "bg-primary/20 text-primary shadow-md shadow-primary/30 ring-1 ring-primary/20"
+                    ? "bg-primary/20 text-primary shadow-sm sm:shadow-md shadow-primary/30 ring-1 ring-primary/20"
                     : "bg-secondary text-secondary-foreground hover:bg-secondary/80",
                 )}
               >
-                <Atom className="w-3.5 h-3.5" />
-                DeepThink
+                <Atom className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                <span className="hidden sm:inline">DeepThink</span>
+                <span className="sm:hidden">Think</span>
               </button>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-2">
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
                 onClick={startVoiceInput}
                 className={cn(
-                  "w-11 h-11 rounded-lg",
+                  "w-9 h-9 sm:w-11 sm:h-11 rounded-lg",
                   isListening &&
                     "bg-destructive/20 text-destructive animate-pulse",
                 )}
               >
                 {isListening ? (
-                  <MicOff className="w-5 h-5" />
+                  <MicOff className="w-4 h-4 sm:w-5 sm:h-5" />
                 ) : (
-                  <Mic className="w-5 h-5" />
+                  <Mic className="w-4 h-4 sm:w-5 sm:h-5" />
                 )}
               </Button>
 
@@ -213,9 +214,9 @@ export function ChatInput({
                   type="button"
                   size="icon"
                   onClick={onStop}
-                  className="w-11 h-11 rounded-lg bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-lg shadow-destructive/30 animate-pulse"
+                  className="w-9 h-9 sm:w-11 sm:h-11 rounded-lg bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-md sm:shadow-lg shadow-destructive/30 animate-pulse"
                 >
-                  <Square className="w-5 h-5 fill-current" />
+                  <Square className="w-4 h-4 sm:w-5 sm:h-5 fill-current" />
                 </Button>
               ) : (
                 <Button
@@ -224,13 +225,13 @@ export function ChatInput({
                   variant="ghost"
                   disabled={!message.trim()}
                   className={cn(
-                    "w-11 h-11 rounded-lg border-0 shadow-none transition-colors",
+                    "w-9 h-9 sm:w-11 sm:h-11 rounded-lg border-0 shadow-none transition-colors",
                     message.trim()
                       ? "text-primary hover:text-primary hover:bg-primary/10"
                       : "text-muted-foreground bg-transparent hover:bg-transparent",
                   )}
                 >
-                  <Send className="w-5 h-5" />
+                  <Send className="w-4 h-4 sm:w-5 sm:h-5" />
                 </Button>
               )}
             </div>

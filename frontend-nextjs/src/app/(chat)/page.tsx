@@ -375,9 +375,17 @@ export default function ChatPage() {
         messagesCount={messages.length}
       />
 
+      {/* Mobile Sidebar Overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={toggleSidebar}
+        />
+      )}
+
       {/* Sidebar Toggle Button - Always Visible */}
       {!sidebarOpen && (
-        <div className="fixed top-4 left-4 right-4 z-50 flex items-center justify-between">
+        <div className="fixed top-4 left-4 z-50 flex items-center gap-2">
           <button
             onClick={toggleSidebar}
             className="p-2 rounded-lg bg-card border border-border shadow-lg hover:bg-accent transition-colors"
@@ -386,7 +394,7 @@ export default function ChatPage() {
           </button>
           <button
             onClick={handleNewChat}
-            className="p-2 rounded-lg bg-card border border-border shadow-lg hover:bg-accent transition-colors"
+            className="p-2 rounded-lg bg-card border border-border shadow-lg hover:bg-accent transition-colors md:hidden"
             title="New Chat"
           >
             <Plus className="w-4 h-4" />
@@ -452,7 +460,12 @@ export default function ChatPage() {
           </>
         )}
 
-        {currentConversation && (
+        <div
+          className={cn(
+            "border-t border-border bg-background",
+            !currentConversation && "hidden",
+          )}
+        >
           <ChatInput
             onSend={handleSendMessage}
             selectedModel={selectedModel}
@@ -461,7 +474,7 @@ export default function ChatPage() {
             initialMessage={inputMessage}
             onStop={handleStop}
           />
-        )}
+        </div>
       </main>
     </div>
   );
@@ -483,27 +496,30 @@ function WelcomeScreen({
   inputMessage: string;
 }) {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-8">
+    <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-center max-w-2xl"
+        className="text-center max-w-2xl w-full"
       >
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-          className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-xl"
+          className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-xl"
         >
-          <Layers className="w-10 h-10 text-primary-foreground" />
+          <Layers className="w-8 h-8 sm:w-10 sm:h-10 text-primary-foreground" />
         </motion.div>
 
-        <h1 className="text-3xl font-bold mb-3">Welcome to HuaShui AI</h1>
-        <p className="text-muted-foreground mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-3">
+          How can I help you?
+        </h1>
+        <p className="text-muted-foreground mb-6 sm:mb-8 text-sm sm:text-base">
           Start a conversation by typing a message below
         </p>
 
-        <div className="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full max-w-4xl">
+        {/* Quick cards - hidden on mobile */}
+        <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full max-w-4xl">
           <QuickActionCard
             icon={<MessageSquare className="w-5 h-5" />}
             title="NCWU Info"
@@ -535,7 +551,7 @@ function WelcomeScreen({
         </div>
       </motion.div>
 
-      <div className="w-full max-w-3xl mt-8">
+      <div className="w-full max-w-3xl mt-6 sm:mt-8 px-2 sm:px-0">
         <ChatInput
           onSend={onSend}
           selectedModel={selectedModel}

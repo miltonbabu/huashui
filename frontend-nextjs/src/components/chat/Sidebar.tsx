@@ -89,7 +89,7 @@ export function Sidebar({
       initial={false}
       animate={{ width: sidebarOpen ? 280 : 0 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
-      className="h-screen bg-card border-r border-border flex flex-col overflow-hidden relative"
+      className="h-screen bg-card border-r border-border flex flex-col overflow-hidden relative fixed md:relative z-50"
     >
       <div className={cn("flex flex-col h-full", !sidebarOpen && "opacity-0")}>
         <div className="p-4 border-b border-border">

@@ -47,7 +47,7 @@ export const useChatStore = create<ChatStore>((set) => ({
   streamingReasoning: "",
   streamingContent: "",
   error: null,
-  sidebarOpen: true,
+  sidebarOpen: typeof window !== "undefined" ? window.innerWidth >= 768 : true,
 
   setConversations: (conversations) => set({ conversations }),
 
